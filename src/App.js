@@ -2,8 +2,8 @@ import logo from "./logo.svg";
 import { useState, useEffect } from "react";
 import "./App.css";
 import { useDispatch, useSelector } from "react-redux";
-import todoAction from "./actions/toDo";
-import searchAction from "./actions/search";
+import {todo, search} from "./actions/toDo";
+
 import axios from "axios";
 
 function App() {
@@ -11,7 +11,7 @@ function App() {
   const [searchItem, setSearchItem] = useState("");
   const dispatch = useDispatch();
   const todo = useSelector((state) => state.toDo);
-  const search = useSelector((state) => state.search);
+  // const search = useSelector((state) => state.search);
 
   const fetchComments = async () => {
     try {
@@ -36,25 +36,34 @@ function App() {
     fetchComments();
   }, []);
 
-  function setSearchResults(e) {
-    setSearchItem(e.target.value);
-    dispatch(searchAction({ payload: searchItem }));
+  function setSearchResults(searchItem) {
+    setSearchItem("");
+    // dispatch(searchAction({ payload: searchItem }));
+    dispatch({ type: "SEARCH_LIST", payload: searchItem });
   }
 
-  console.log(todo);
-  console.log(search);
+  // console.log(todo);
+  // console.log(search);
 
   return (
     <div className='App'>
-      <input value={toDo} onChange={(e) => setToDo(e.target.value)} />
-      <input value={searchItem} onChange={setSearchResults} />
-      <button
+      <input value={toDo} onChange={(e) => setToDo(e.target.value)} />      <button
         onClick={() =>
-          dispatch(todoAction({ item: toDo, userId: 10, title: toDo }))
+          dispatch(todo({ item: toDo, userId: 10, title: toDo }))
         }
       >
         Add something
       </button>
+      <hr></hr>
+      <input value={searchItem} onChange={(e)=>setSearchItem(e.target.value)} />
+      <button
+        onClick={() =>
+          setSearchResults(searchItem)
+        }
+      >
+        Search To-Do's
+      </button>
+
       <h1>MAP THE DATA IN THE UI</h1>
       {/* {toDo.keys(todo.id).map((key, index) => {
         return (
@@ -65,13 +74,16 @@ function App() {
           </div>
         );
       })} */}
-      {searchItem === "" && (
+      {/* {searchItem === "" && (
         <>
           {todo.data.map((item) => {
             return <div key={item.id}> {item.title}</div>;
           })}
         </>
-      )}
+      )} */}
+      {todo.data.map((item) => {
+        return <div key={item.id}> {item.title}</div>;
+      })}
     </div>
   );
 }

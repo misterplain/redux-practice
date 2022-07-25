@@ -15,6 +15,12 @@ export default function todo(state=initialState, action){
             newState.data = action.payload.data
             return newState;
         }
+        case 'SEARCH_LIST':{
+            console.log('dispatch search item')
+            let newState = {...state};
+            newState.data.filter(item => item.title === action.payload);
+            return newState;
+        }
         default:{
             return state;
         }
