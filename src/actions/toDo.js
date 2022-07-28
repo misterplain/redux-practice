@@ -7,7 +7,14 @@ export function todo(payload) {
 
 export function search(payload) {
   return {
-    type: "SEARCH_TODO",
+    type: "SEARCH_LIST",
     payload,
   };
+}
+
+export function filter(payload){
+    return {
+        type: "FILTER_LIST",
+        payload,
+    }
 }

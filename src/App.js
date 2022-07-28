@@ -2,7 +2,11 @@ import logo from "./logo.svg";
 import { useState, useEffect } from "react";
 import "./App.css";
 import { useDispatch, useSelector } from "react-redux";
-import {todo, search} from "./actions/toDo";
+import {
+  todo as addTodo,
+  search as searchTodo,
+  filter as filterTodo,
+} from "./actions/toDo";
 
 import axios from "axios";
 
@@ -11,6 +15,7 @@ function App() {
   const [searchItem, setSearchItem] = useState("");
   const dispatch = useDispatch();
   const todo = useSelector((state) => state.toDo);
+  const [searchInput, setSearchInput] = useState("");
   // const search = useSelector((state) => state.search);
 
   const fetchComments = async () => {
@@ -36,10 +41,26 @@ function App() {
     fetchComments();
   }, []);
 
+  function resetFilter() {
+    fetchComments();
+    setToDo("");
+    setSearchInput("");
+  }
+
   function setSearchResults(searchItem) {
-    setSearchItem("");
     // dispatch(searchAction({ payload: searchItem }));
-    dispatch({ type: "SEARCH_LIST", payload: searchItem });
+    let payload = { searchItem };
+    dispatch(searchTodo(payload));
+    setSearchItem("");
+  }
+
+  function handleChangeText(text) {
+    let payload = { searchItem:text };
+    dispatch(searchTodo(payload));
+    if(!text.length){
+      fetchComments()
+    }
+    setSearchInput(text);
   }
 
   // console.log(todo);
@@ -47,23 +68,29 @@ function App() {
 
   return (
     <div className='App'>
-      <input value={toDo} onChange={(e) => setToDo(e.target.value)} />      <button
+      <input value={toDo} onChange={(e) => setToDo(e.target.value)} />{" "}
+      <button
         onClick={() =>
-          dispatch(todo({ item: toDo, userId: 10, title: toDo }))
+          dispatch(addTodo({ item: toDo, userId: 10, title: toDo }))
         }
       >
         Add something
       </button>
       <hr></hr>
-      <input value={searchItem} onChange={(e)=>setSearchItem(e.target.value)} />
-      <button
-        onClick={() =>
-          setSearchResults(searchItem)
-        }
-      >
+      <input
+        value={searchItem}
+        onChange={(e) => setSearchItem(e.target.value)}
+      />
+      <button onClick={() => setSearchResults(searchItem)}>
         Search To-Do's
       </button>
-
+      <hr></hr>
+      <input
+        value={searchInput}
+        onChange={(e) => handleChangeText(e.target.value)}
+      />
+      <hr></hr>
+      <button onClick={resetFilter}>Reset Filter</button>
       <h1>MAP THE DATA IN THE UI</h1>
       {/* {toDo.keys(todo.id).map((key, index) => {
         return (
